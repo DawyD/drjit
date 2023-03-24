@@ -38,6 +38,15 @@ auto bind_type(py::module_ &m, bool scalar_mode = false) {
     else if constexpr (Array::Depth == 4)
         shape = py::make_tuple(Array::Size, Value::Size, Value::Value::Size,
                                Value::Value::Value::Size);
+    else if constexpr (Array::Depth == 8)
+        shape = py::make_tuple(Array::Size,
+                               Value::Size,
+                               Value::Value::Size,
+                               Value::Value::Value::Size,
+                               Value::Value::Value::Value::Size,
+                               Value::Value::Value::Value::Value::Size,
+                               Value::Value::Value::Value::Value::Value::Size,
+                               Value::Value::Value::Value::Value::Value::Value::Size);
 
     PyTypeObject *value_obj;
     if constexpr (std::is_scalar_v<Value>) {
@@ -600,30 +609,38 @@ void bind_ad_details(py::class_<dr::DiffArray<T>> &cls) {
     DRJIT_BIND_ARRAY_TYPES_DIM(Module, Guide, Scalar, 2)                       \
     DRJIT_BIND_ARRAY_TYPES_DIM(Module, Guide, Scalar, 3)                       \
     DRJIT_BIND_ARRAY_TYPES_DIM(Module, Guide, Scalar, 4)                       \
+    DRJIT_BIND_ARRAY_TYPES_DIM(Module, Guide, Scalar, 8)                       \
     DRJIT_BIND_ARRAY_TYPES_DYN(Module, Guide, Scalar)                          \
     bind<dr::mask_t<dr::Array<dr::Array<Guide, 2>, 2>>>(Module, Scalar);       \
     bind<dr::mask_t<dr::Array<dr::Array<Guide, 3>, 3>>>(Module, Scalar);       \
     bind<dr::mask_t<dr::Array<dr::Array<Guide, 4>, 4>>>(Module, Scalar);       \
+    bind<dr::mask_t<dr::Array<dr::Array<Guide, 8>, 8>>>(Module, Scalar);       \
     DRJIT_BIND_COMPLEX_TYPES(Module, Guide, Scalar)                            \
     DRJIT_BIND_QUATERNION_TYPES(Module, Guide, Scalar)                         \
     DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide, Scalar, 2)                      \
     DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide, Scalar, 3)                      \
     DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide, Scalar, 4)                      \
+    DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide, Scalar, 8)                      \
                                                                                \
     using Guide1 = dr::Array<Guide, 1>;                                        \
     using Guide3 = dr::Array<Guide, 3>;                                        \
     using Guide4 = dr::Array<Guide, 4>;                                        \
+    using Guide8 = dr::Array<Guide, 8>;                                        \
     bind<dr::mask_t<dr::Array<dr::float32_array_t<Guide1>, 2>>>(Module,        \
                                                                 Scalar);       \
     bind<dr::mask_t<dr::Array<dr::float32_array_t<Guide3>, 2>>>(Module,        \
                                                                 Scalar);       \
     bind<dr::mask_t<dr::Array<dr::float32_array_t<Guide4>, 2>>>(Module,        \
                                                                 Scalar);       \
+    bind<dr::mask_t<dr::Array<dr::float32_array_t<Guide8>, 2>>>(Module,        \
+                                                                Scalar);       \
     bind<dr::mask_t<dr::Array<Guide1, 4>>>(Module, Scalar);                    \
     bind<dr::mask_t<dr::Array<Guide3, 4>>>(Module, Scalar);                    \
+    bind<dr::mask_t<dr::Array<Guide8, 4>>>(Module, Scalar);                    \
     bind<dr::mask_t<dr::Array<dr::Array<Guide1, 4>, 4>>>(Module, Scalar);      \
     bind<dr::mask_t<dr::Array<dr::Array<Guide3, 4>, 4>>>(Module, Scalar);      \
     bind<dr::mask_t<dr::Array<dr::Array<Guide4, 4>, 4>>>(Module, Scalar);      \
+    bind<dr::mask_t<dr::Array<dr::Array<Guide8, 4>, 4>>>(Module, Scalar);      \
     bind<dr::Array<dr::int32_array_t<Guide1>,   4>>(Module, Scalar);           \
     bind<dr::Array<dr::uint32_array_t<Guide1>,  4>>(Module, Scalar);           \
     bind<dr::Array<dr::float32_array_t<Guide1>, 4>>(Module, Scalar);           \
@@ -636,12 +653,18 @@ void bind_ad_details(py::class_<dr::DiffArray<T>> &cls) {
     bind<dr::Array<dr::uint32_array_t<Guide4>,  4>>(Module, Scalar);           \
     bind<dr::Array<dr::float32_array_t<Guide4>, 4>>(Module, Scalar);           \
     bind<dr::Array<dr::float64_array_t<Guide4>, 4>>(Module, Scalar);           \
+    bind<dr::Array<dr::int32_array_t<Guide8>,   4>>(Module, Scalar);           \
+    bind<dr::Array<dr::uint32_array_t<Guide8>,  4>>(Module, Scalar);           \
+    bind<dr::Array<dr::float32_array_t<Guide8>, 4>>(Module, Scalar);           \
+    bind<dr::Array<dr::float64_array_t<Guide8>, 4>>(Module, Scalar);           \
     DRJIT_BIND_COMPLEX_TYPES(Module, Guide1, Scalar)                           \
     DRJIT_BIND_COMPLEX_TYPES(Module, Guide3, Scalar)                           \
     DRJIT_BIND_COMPLEX_TYPES(Module, Guide4, Scalar)                           \
+    DRJIT_BIND_COMPLEX_TYPES(Module, Guide8, Scalar)                           \
     DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide1, Scalar, 4)                     \
     DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide3, Scalar, 4)                     \
     DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide4, Scalar, 4)                     \
+    DRJIT_BIND_MATRIX_TYPES_DIM(Module, Guide8, Scalar, 4)
 
 #define DRJIT_BIND_ARRAY_BASE(Module, Guide, Scalar)                           \
     auto a_msk =                                                               \
