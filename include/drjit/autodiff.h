@@ -1083,7 +1083,7 @@ struct DiffArray : ArrayBase<value_t<Type_>, is_mask_v<Type_>, DiffArray<Type_>>
         if constexpr (is_floating_point_v<Scalar>)
             drjit_raise("not_(): invalid operand type!");
         else
-            return DiffArray::create(0, ~m_value);
+            return DiffArray::create(0, detail::not_(m_value));
     }
 
     DiffArray or_(const DiffArray &a) const {
@@ -1529,7 +1529,7 @@ struct DiffArray : ArrayBase<value_t<Type_>, is_mask_v<Type_>, DiffArray<Type_>>
             drjit_raise("vcall_(): not supported in scalar mode!");
     }
 
-    DiffArray block_sum_(size_t block_size) {
+    DiffArray block_sum_(size_t block_size) const {
         if constexpr (is_jit_v<Type>) {
             if (m_index)
                 drjit_raise("block_sum_(): not supported for attached arrays!");
